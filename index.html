@@ -254,11 +254,15 @@
     });
     
     // Event Listener für die Eingabefelder: Maximale und erreichte Punktzahl
+    // Beide Felder lösen nun jeweils updateInfoBox() und updateResult() aus.
     document.getElementById('maxPoints').addEventListener('input', function() {
       updateInfoBox();
       updateResult();
     });
-    document.getElementById('achievedPoints').addEventListener('input', updateResult);
+    document.getElementById('achievedPoints').addEventListener('input', function() {
+      updateInfoBox();
+      updateResult();
+    });
     
     // Aktualisiert die Info-Box inklusive dynamischer Überschrift und hebt den relevanten Bereich hervor
     function updateInfoBox() {
@@ -277,7 +281,7 @@
         const achievedPoints = parseFloat(achievedPointsValue);
         if (!isNaN(achievedPoints) && achievedPoints >= 0 && achievedPoints <= maxPoints) {
           const achievedPercentage = (achievedPoints / maxPoints) * 100;
-          // Bestimme, welche Note erreicht wurde (analog zur calculateGrade()-Logik)
+          // Ermittele, welche Note erreicht wurde (analog zur calculateGrade()-Logik)
           for (let g = 1; g <= 6; g++) {
             if (achievedPercentage >= currentThresholds[g] * 100) {
               highlightedGrade = g;
@@ -300,7 +304,7 @@
         let liClass = (highlightedGrade === 6) ? ' class="highlight"' : '';
         html += `<li${liClass}>Note 6: unter ${(currentThresholds[5] * 100).toFixed(2)}% (weniger als ${pointsThreshold} Punkte)</li>`;
       } else {
-        // Falls kein gültiger Maximalwert eingegeben wurde, nur die Prozentwerte
+        // Falls kein gültiger Maximalwert eingegeben wurde, nur die Prozentwerte anzeigen.
         for (let grade = 1; grade <= 5; grade++) {
           const percentage = (currentThresholds[grade] * 100).toFixed(2);
           html += `<li>Note ${grade}: ab ${percentage}%</li>`;
