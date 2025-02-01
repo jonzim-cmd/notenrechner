@@ -87,7 +87,7 @@
     <div class="card-header">
       <h1 class="card-title">Notenrechner IHK 92%</h1>
     </div>
-    <!-- Punktzahlen eingeben -->
+    <!-- Eingabe der Punktzahlen -->
     <div class="input-group">
       <label for="maxPoints">Maximale Punktzahl (6-95):</label>
       <input type="number" step="any" id="maxPoints" name="maxPoints" min="6" max="95" required>
@@ -97,7 +97,23 @@
       <input type="number" step="any" id="achievedPoints" name="achievedPoints" min="0" required>
     </div>
     
-    <!-- Dynamisch anpassbare Notengrenzen -->
+    <!-- Ergebnisanzeige -->
+    <div id="result"></div>
+
+    <!-- Info-Box mit den Notengrenzen und erforderlichen Punktzahlen -->
+    <div id="infoBox" class="info-box">
+      <h3>Notengrenzen:</h3>
+      <ul>
+        <li>Note 1: ab 92%</li>
+        <li>Note 2: ab 81%</li>
+        <li>Note 3: ab 67%</li>
+        <li>Note 4: ab 50%</li>
+        <li>Note 5: ab 30%</li>
+        <li>Note 6: unter 30%</li>
+      </ul>
+    </div>
+
+    <!-- Dashboard für Notengrenzen-Anpassung (ganz unten) -->
     <div class="card">
       <h2>Notengrenzen anpassen</h2>
       <div class="input-group">
@@ -121,22 +137,6 @@
         <input type="number" id="threshold5" step="any" value="30" min="0" max="100">
       </div>
       <button id="resetThresholds">Auf IHK 92% Ursprung zurücksetzen</button>
-    </div>
-    
-    <!-- Ergebnisanzeige -->
-    <div id="result"></div>
-
-    <!-- Dynamische Info-Box mit Notengrenzen und erforderlichen Punktzahlen -->
-    <div id="infoBox" class="info-box">
-      <h3>Notengrenzen:</h3>
-      <ul>
-        <li>Note 1: ab 92%</li>
-        <li>Note 2: ab 81%</li>
-        <li>Note 3: ab 67%</li>
-        <li>Note 4: ab 50%</li>
-        <li>Note 5: ab 30%</li>
-        <li>Note 6: unter 30%</li>
-      </ul>
     </div>
   </div>
 
@@ -240,7 +240,7 @@
         }
         // Für Note 6: unter dem Wert von Note 5
         const pointsThreshold = (maxPoints * gradeThresholds[5]).toFixed(2);
-        html += `<li>Note 6: unter ${ (gradeThresholds[5]*100).toFixed(2) }% (weniger als ${pointsThreshold} Punkte)</li>`;
+        html += `<li>Note 6: unter ${(gradeThresholds[5]*100).toFixed(2)}% (weniger als ${pointsThreshold} Punkte)</li>`;
       } else {
         // Falls keine gültige maximale Punktzahl vorliegt, Standardanzeige:
         html += `<li>Note 1: ab ${defaultGradeThresholds[1]*100}%</li>
