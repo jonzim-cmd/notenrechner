@@ -85,6 +85,11 @@
     }
     .info-box li {
       margin-bottom: 5px;
+      padding: 3px;
+    }
+    /* Hervorhebung des relevanten Bereichs */
+    .highlight {
+      background-color: #ffff99; /* hellgelb */
     }
   </style>
 </head>
@@ -114,15 +119,7 @@
     
     <!-- Info-Box mit dynamischer Überschrift und den Notengrenzen -->
     <div id="infoBox" class="info-box">
-      <!-- Überschrift wird dynamisch in updateInfoBox() gesetzt -->
-      <ul>
-        <li>Note 1: ab 92%</li>
-        <li>Note 2: ab 81%</li>
-        <li>Note 3: ab 67%</li>
-        <li>Note 4: ab 50%</li>
-        <li>Note 5: ab 30%</li>
-        <li>Note 6: unter 30%</li>
-      </ul>
+      <!-- Die Überschrift und Liste werden in updateInfoBox() dynamisch gesetzt -->
     </div>
     
     <!-- Dashboard zur individuellen Anpassung (ganz unten) -->
@@ -263,26 +260,47 @@
     });
     document.getElementById('achievedPoints').addEventListener('input', updateResult);
     
-    // Aktualisiert die Info-Box inklusive dynamischer Überschrift
+    // Aktualisiert die Info-Box inklusive dynamischer Überschrift und hebt den relevanten Bereich hervor
     function updateInfoBox() {
       const maxPointsInput = document.getElementById('maxPoints').value;
+      const achievedPointsInput = document.getElementById('achievedPoints').value;
       let html = `<h3>${updateInfoBoxHeader()}</h3><ul>`;
       
       // Versuche, den eingegebenen Maximalwert zu parsen
       const maxPointsValue = maxPointsInput.replace(',', '.');
       const maxPoints = parseFloat(maxPointsValue);
       
+      // Errechne, falls möglich, den erreichten Prozentwert und bestimme die Note
+      let highlightedGrade = null;
+      if (!isNaN(maxPoints) && maxPoints >= 10 && maxPoints <= 100 && achievedPointsInput !== "") {
+        const achievedPointsValue = achievedPointsInput.replace(',', '.');
+        const achievedPoints = parseFloat(achievedPointsValue);
+        if (!isNaN(achievedPoints) && achievedPoints >= 0 && achievedPoints <= maxPoints) {
+          const achievedPercentage = (achievedPoints / maxPoints) * 100;
+          // Bestimme, welche Note erreicht wurde (analog zur calculateGrade()-Logik)
+          for (let g = 1; g <= 6; g++) {
+            if (achievedPercentage >= currentThresholds[g] * 100) {
+              highlightedGrade = g;
+              break;
+            }
+          }
+        }
+      }
+      
       if (!isNaN(maxPoints) && maxPoints >= 10 && maxPoints <= 100) {
-        // Zeige neben den Prozentwerten auch die minimal benötigten Punkte an
+        // Für Noten 1 bis 5 mit benötigten Punkten
         for (let grade = 1; grade <= 5; grade++) {
           const percentage = (currentThresholds[grade] * 100).toFixed(2);
           const pointsNeeded = (maxPoints * currentThresholds[grade]).toFixed(2);
-          html += `<li>Note ${grade}: ab ${percentage}% (ab ${pointsNeeded} Punkten)</li>`;
+          let liClass = (highlightedGrade === grade) ? ' class="highlight"' : '';
+          html += `<li${liClass}>Note ${grade}: ab ${percentage}% (ab ${pointsNeeded} Punkten)</li>`;
         }
+        // Für Note 6: unter dem Wert von Note 5
         const pointsThreshold = (maxPoints * currentThresholds[5]).toFixed(2);
-        html += `<li>Note 6: unter ${(currentThresholds[5] * 100).toFixed(2)}% (weniger als ${pointsThreshold} Punkte)</li>`;
+        let liClass = (highlightedGrade === 6) ? ' class="highlight"' : '';
+        html += `<li${liClass}>Note 6: unter ${(currentThresholds[5] * 100).toFixed(2)}% (weniger als ${pointsThreshold} Punkte)</li>`;
       } else {
-        // Falls kein gültiger Maximalwert eingegeben wurde, werden nur die Prozentwerte angezeigt.
+        // Falls kein gültiger Maximalwert eingegeben wurde, nur die Prozentwerte
         for (let grade = 1; grade <= 5; grade++) {
           const percentage = (currentThresholds[grade] * 100).toFixed(2);
           html += `<li>Note ${grade}: ab ${percentage}%</li>`;
