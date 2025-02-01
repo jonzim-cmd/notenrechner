@@ -90,7 +90,7 @@
 </head>
 <body>
   <div class="card">
-    <!-- Dynamische Überschrift -->
+    <!-- Dynamische Hauptüberschrift -->
     <h1 id="mainTitle" class="card-title">Notenrechner IHK 92 %</h1>
     
     <!-- Preset-Buttons -->
@@ -112,9 +112,9 @@
     <!-- Ergebnisanzeige -->
     <div id="result"></div>
     
-    <!-- Info-Box mit den Notengrenzen inkl. Punktzahlen -->
+    <!-- Info-Box mit dynamischer Überschrift und den Notengrenzen -->
     <div id="infoBox" class="info-box">
-      <h3>Notengrenzen:</h3>
+      <!-- Überschrift wird dynamisch in updateInfoBox() gesetzt -->
       <ul>
         <li>Note 1: ab 92%</li>
         <li>Note 2: ab 81%</li>
@@ -186,8 +186,9 @@
       document.getElementById('threshold4'),
       document.getElementById('threshold5')
     ];
+    const infoBox = document.getElementById('infoBox');
     
-    // Funktion zur Überschriften-Aktualisierung
+    // Funktion zur Überschriften-Aktualisierung (Hauptüberschrift)
     function updateHeader() {
       let suffix = "";
       if (currentPreset === "IHK") {
@@ -200,7 +201,20 @@
       mainTitle.textContent = "Notenrechner " + suffix;
     }
     
-    // Funktion: Preset laden (Werte und Dashboard-Eingabefelder aktualisieren)
+    // Funktion zur dynamischen Anpassung der Info-Box-Überschrift
+    function updateInfoBoxHeader() {
+      let suffix = "";
+      if (currentPreset === "IHK") {
+        suffix = "IHK 92 %";
+      } else if (currentPreset === "AP/3.SA") {
+        suffix = "AP/3.SA";
+      } else {
+        suffix = "manuell";
+      }
+      return "Notengrenzen " + suffix + ":";
+    }
+    
+    // Funktion: Preset laden (Werte und Dashboard-Felder aktualisieren)
     function loadPreset(preset) {
       if (preset === "IHK") {
         currentThresholds = Object.assign({}, ihkThresholds);
@@ -242,18 +256,17 @@
       });
     });
     
-    // Event Listener für Eingabefelder: Maximale und erreichte Punktzahl
+    // Event Listener für die Eingabefelder: Maximale und erreichte Punktzahl
     document.getElementById('maxPoints').addEventListener('input', function() {
       updateInfoBox();
       updateResult();
     });
     document.getElementById('achievedPoints').addEventListener('input', updateResult);
     
-    // Aktualisiert die Info-Box
+    // Aktualisiert die Info-Box inklusive dynamischer Überschrift
     function updateInfoBox() {
       const maxPointsInput = document.getElementById('maxPoints').value;
-      const infoBox = document.getElementById('infoBox');
-      let html = '<h3>Notengrenzen:</h3><ul>';
+      let html = `<h3>${updateInfoBoxHeader()}</h3><ul>`;
       
       // Versuche, den eingegebenen Maximalwert zu parsen
       const maxPointsValue = maxPointsInput.replace(',', '.');
