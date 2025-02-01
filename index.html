@@ -173,7 +173,7 @@
     
     // Aktuelle Thresholds und aktueller Preset-Modus
     let currentThresholds = Object.assign({}, ihkThresholds);
-    let currentPreset = "IHK"; // "IHK", "AP/3.SA" oder "individuell"
+    let currentPreset = "IHK"; // "IHK", "AP/3.SA" oder "manuell"
     
     // Elemente
     const mainTitle = document.getElementById('mainTitle');
@@ -187,7 +187,7 @@
       document.getElementById('threshold5')
     ];
     
-    // Funktionen zur Überschrift-Aktualisierung
+    // Funktion zur Überschriften-Aktualisierung
     function updateHeader() {
       let suffix = "";
       if (currentPreset === "IHK") {
@@ -195,7 +195,7 @@
       } else if (currentPreset === "AP/3.SA") {
         suffix = "AP/3.SA";
       } else {
-        suffix = "individuell";
+        suffix = "manuell";
       }
       mainTitle.textContent = "Notenrechner " + suffix;
     }
@@ -228,63 +228,60 @@
       loadPreset("AP/3.SA");
     });
     
-    // Falls in den Dashboard-Feldern manuelle Änderungen vorgenommen werden,
-    // wird der Modus auf "individuell" gesetzt.
+    // Bei manuellen Änderungen in den Dashboard-Feldern wird der Modus auf "manuell" gesetzt.
     thresholdInputs.forEach((input, index) => {
       input.addEventListener('input', function() {
         const val = parseFloat(input.value) / 100;
         if (!isNaN(val)) {
           currentThresholds[index + 1] = val;
         }
-        currentPreset = "individuell";
+        currentPreset = "manuell";
         updateHeader();
         updateInfoBox();
         updateResult();
       });
     });
     
-    // Event Listener für Eingabefelder: maximale Punktzahl und erreichte Punktzahl
+    // Event Listener für Eingabefelder: Maximale und erreichte Punktzahl
     document.getElementById('maxPoints').addEventListener('input', function() {
       updateInfoBox();
       updateResult();
     });
     document.getElementById('achievedPoints').addEventListener('input', updateResult);
     
-    // Aktualisiert die Info-Box: zeigt Notengrenzen und erforderliche Punkte (abhängig von maxPoints)
+    // Aktualisiert die Info-Box
     function updateInfoBox() {
       const maxPointsInput = document.getElementById('maxPoints').value;
       const infoBox = document.getElementById('infoBox');
       let html = '<h3>Notengrenzen:</h3><ul>';
-    
-      // Ersetze Komma, falls notwendig
+      
+      // Versuche, den eingegebenen Maximalwert zu parsen
       const maxPointsValue = maxPointsInput.replace(',', '.');
       const maxPoints = parseFloat(maxPointsValue);
-    
+      
       if (!isNaN(maxPoints) && maxPoints >= 10 && maxPoints <= 100) {
+        // Zeige neben den Prozentwerten auch die minimal benötigten Punkte an
         for (let grade = 1; grade <= 5; grade++) {
           const percentage = (currentThresholds[grade] * 100).toFixed(2);
           const pointsNeeded = (maxPoints * currentThresholds[grade]).toFixed(2);
           html += `<li>Note ${grade}: ab ${percentage}% (ab ${pointsNeeded} Punkten)</li>`;
         }
-        // Note 6: unter dem Wert von Note 5
         const pointsThreshold = (maxPoints * currentThresholds[5]).toFixed(2);
         html += `<li>Note 6: unter ${(currentThresholds[5] * 100).toFixed(2)}% (weniger als ${pointsThreshold} Punkte)</li>`;
       } else {
-        // Standardanzeige, wenn maxPoints fehlt oder ungültig ist
-        html += `<li>Note 1: ab ${ihkThresholds[1] * 100}%</li>
-                 <li>Note 2: ab ${ihkThresholds[2] * 100}%</li>
-                 <li>Note 3: ab ${ihkThresholds[3] * 100}%</li>
-                 <li>Note 4: ab ${ihkThresholds[4] * 100}%</li>
-                 <li>Note 5: ab ${ihkThresholds[5] * 100}%</li>
-                 <li>Note 6: unter ${ihkThresholds[5] * 100}%</li>`;
+        // Falls kein gültiger Maximalwert eingegeben wurde, werden nur die Prozentwerte angezeigt.
+        for (let grade = 1; grade <= 5; grade++) {
+          const percentage = (currentThresholds[grade] * 100).toFixed(2);
+          html += `<li>Note ${grade}: ab ${percentage}%</li>`;
+        }
+        html += `<li>Note 6: unter ${(currentThresholds[5] * 100).toFixed(2)}%</li>`;
       }
       html += '</ul>';
       infoBox.innerHTML = html;
     }
     
-    // Berechnet die Note anhand der eingegebenen maximalen und erreichten Punktzahl
+    // Berechnet die Note anhand der eingegebenen Punktzahlen
     function calculateGrade(max, achieved) {
-      // Ersetze Komma
       max = max.replace(',', '.');
       achieved = achieved.replace(',', '.');
     
@@ -302,7 +299,6 @@
       const percentage = parseFloat(rawPercentage.toFixed(2));
     
       let grade = 6;
-      // Iteriere von Note 1 bis 6
       for (let g = 1; g <= 6; g++) {
         if (percentage >= currentThresholds[g] * 100) {
           grade = g;
@@ -334,7 +330,7 @@
       }
     }
     
-    // Initiale Aktualisierung: Setze Preset IHK als Standard
+    // Initiale Aktualisierung: Standardmäßig Preset IHK laden
     loadPreset("IHK");
     updateInfoBox();
   </script>
