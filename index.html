@@ -5,19 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Notenrechner</title>
   <style>
+    /* Dark Mode Styles */
     body {
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      background: #121212;
       padding: 20px;
+      color: #e0e0e0;
     }
     .card {
-      background: #fff;
+      background: #1e1e1e;
       max-width: 500px;
       margin: 0 auto 20px;
       padding: 20px;
-      border: 1px solid #ddd;
+      border: 1px solid #333;
       border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
     }
     .card-title {
       font-size: 24px;
@@ -33,12 +35,12 @@
       margin: 0 5px;
       border: none;
       border-radius: 4px;
-      background: #007bff;
-      color: #fff;
+      background: #bb86fc;
+      color: #000;
       cursor: pointer;
     }
     .button-group button:hover {
-      background: #0056b3;
+      background: #9a67ea;
     }
     .input-group {
       margin-bottom: 15px;
@@ -51,7 +53,9 @@
     .input-group input {
       width: 100%;
       padding: 8px;
-      border: 1px solid #ccc;
+      background: #333;
+      color: #e0e0e0;
+      border: 1px solid #555;
       border-radius: 4px;
     }
     .alert {
@@ -60,36 +64,41 @@
       border-radius: 4px;
     }
     .alert-success {
-      background: #d4edda;
-      border: 1px solid #c3e6cb;
-      color: #155724;
+      background: #2e7d32;
+      border: 1px solid #1b5e20;
+      color: #c8e6c9;
     }
     .alert-error {
-      background: #f8d7da;
-      border: 1px solid #f5c6cb;
-      color: #721c24;
+      background: #b71c1c;
+      border: 1px solid #7f0000;
+      color: #ff8a80;
     }
     .info-box {
       margin-top: 20px;
       padding: 10px;
-      background: #f8f9fa;
-      border: 1px solid #ddd;
+      background: #1e1e1e;
+      border: 1px solid #333;
       border-radius: 4px;
     }
     .info-box h3 {
       margin-top: 0;
     }
-    .info-box ul {
-      list-style: none;
-      padding-left: 0;
+    /* Tabelle in der Info-Box */
+    .info-box table {
+      width: 100%;
+      border-collapse: collapse;
     }
-    .info-box li {
-      margin-bottom: 5px;
-      padding: 3px;
+    .info-box th, .info-box td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #444;
     }
-    /* Hervorhebung des relevanten Bereichs */
+    .info-box th {
+      border-bottom: 2px solid #444;
+    }
+    /* Hervorhebung der ausgewählten Zeile */
     .highlight {
-      background-color: #ffff99; /* hellgelb */
+      background-color: #2e7d32;
     }
   </style>
 </head>
@@ -117,9 +126,9 @@
     <!-- Ergebnisanzeige -->
     <div id="result"></div>
     
-    <!-- Info-Box mit dynamischer Überschrift und den Notengrenzen -->
+    <!-- Info-Box mit Notengrenzen in Tabellenform -->
     <div id="infoBox" class="info-box">
-      <!-- Überschrift und Liste werden in updateInfoBox() dynamisch gesetzt -->
+      <!-- Überschrift und Tabelle werden in updateInfoBox() dynamisch gesetzt -->
     </div>
     
     <!-- Dashboard zur individuellen Anpassung (ganz unten) -->
@@ -263,19 +272,20 @@
       updateResult();
     });
     
-    // Aktualisiert die Info-Box inklusive dynamischer Überschrift und hebt den relevanten Bereich hervor
+    // Aktualisiert die Info-Box inklusive dynamischer Überschrift und stellt die Notengrenzen in Tabellenform dar
     function updateInfoBox() {
       const maxPointsInput = document.getElementById('maxPoints').value;
       const achievedPointsInput = document.getElementById('achievedPoints').value;
-      let html = `<h3>${updateInfoBoxHeader()}</h3><ul>`;
+      let html = `<h3>${updateInfoBoxHeader()}</h3>`;
       
       // Versuche, den eingegebenen Maximalwert zu parsen
       const maxPointsValue = maxPointsInput.replace(',', '.');
       const maxPoints = parseFloat(maxPointsValue);
+      const hasValidMaxPoints = !isNaN(maxPoints) && maxPoints >= 10 && maxPoints <= 100;
       
       // Errechne, falls möglich, den erreichten Prozentwert und bestimme die Note
       let highlightedGrade = null;
-      if (!isNaN(maxPoints) && maxPoints >= 10 && maxPoints <= 100 && achievedPointsInput !== "") {
+      if (hasValidMaxPoints && achievedPointsInput !== "") {
         const achievedPointsValue = achievedPointsInput.replace(',', '.');
         const achievedPoints = parseFloat(achievedPointsValue);
         if (!isNaN(achievedPoints) && achievedPoints >= 0 && achievedPoints <= maxPoints) {
@@ -289,24 +299,61 @@
         }
       }
       
-      if (!isNaN(maxPoints) && maxPoints >= 10 && maxPoints <= 100) {
+      if (hasValidMaxPoints) {
+        html += `<table>
+                  <thead>
+                    <tr>
+                      <th>Note</th>
+                      <th>ab (%)</th>
+                      <th>ab (Punkte)</th>
+                    </tr>
+                  </thead>
+                  <tbody>`;
         for (let grade = 1; grade <= 5; grade++) {
           const percentage = (currentThresholds[grade] * 100).toFixed(2);
           const pointsNeeded = (maxPoints * currentThresholds[grade]).toFixed(2);
-          let liClass = (highlightedGrade === grade) ? ' class="highlight"' : '';
-          html += `<li${liClass}>Note ${grade}: ab ${percentage}% (ab ${pointsNeeded} Punkten)</li>`;
+          const rowClass = (highlightedGrade === grade) ? ' class="highlight"' : '';
+          html += `<tr${rowClass}>
+                     <td>Note ${grade}</td>
+                     <td>${percentage}%</td>
+                     <td>ab ${pointsNeeded}</td>
+                   </tr>`;
         }
         const pointsThreshold = (maxPoints * currentThresholds[5]).toFixed(2);
-        let liClass = (highlightedGrade === 6) ? ' class="highlight"' : '';
-        html += `<li${liClass}>Note 6: unter ${(currentThresholds[5] * 100).toFixed(2)}% (weniger als ${pointsThreshold} Punkte)</li>`;
+        const percentageForNote6 = (currentThresholds[5] * 100).toFixed(2);
+        const rowClass6 = (highlightedGrade === 6) ? ' class="highlight"' : '';
+        html += `<tr${rowClass6}>
+                   <td>Note 6</td>
+                   <td>unter ${percentageForNote6}%</td>
+                   <td>weniger als ${pointsThreshold}</td>
+                 </tr>`;
+        html += `</tbody></table>`;
       } else {
+        html += `<table>
+                  <thead>
+                    <tr>
+                      <th>Note</th>
+                      <th>ab (%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>`;
         for (let grade = 1; grade <= 5; grade++) {
           const percentage = (currentThresholds[grade] * 100).toFixed(2);
-          html += `<li>Note ${grade}: ab ${percentage}%</li>`;
+          const rowClass = (highlightedGrade === grade) ? ' class="highlight"' : '';
+          html += `<tr${rowClass}>
+                     <td>Note ${grade}</td>
+                     <td>${percentage}%</td>
+                   </tr>`;
         }
-        html += `<li>Note 6: unter ${(currentThresholds[5] * 100).toFixed(2)}%</li>`;
+        const percentageForNote6 = (currentThresholds[5] * 100).toFixed(2);
+        const rowClass6 = (highlightedGrade === 6) ? ' class="highlight"' : '';
+        html += `<tr${rowClass6}>
+                   <td>Note 6</td>
+                   <td>unter ${percentageForNote6}%</td>
+                 </tr>`;
+        html += `</tbody></table>`;
       }
-      html += '</ul>';
+      
       infoBox.innerHTML = html;
     }
     
