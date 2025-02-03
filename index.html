@@ -158,6 +158,14 @@
   </div>
   
   <script>
+    // Hilfsfunktionen zum Runden auf halbe Punktwerte
+    function roundUpToNearestHalf(value) {
+      return Math.ceil(value * 2) / 2;
+    }
+    function roundDownToNearestHalf(value) {
+      return Math.floor(value * 2) / 2;
+    }
+
     // Preset-Notengrenzen als Dezimalwerte
     const ihkThresholds = {
       1: 0.92,
@@ -300,35 +308,47 @@
       }
       
       if (hasValidMaxPoints) {
+        // Kopfzeile wie im Original, inklusive der Spalte "ab (Punkte)"
         html += `<table>
                   <thead>
                     <tr>
                       <th>Note</th>
                       <th>ab (%)</th>
-                      <th>ab (Punkte)</th>
+                      <th>Punkte</th>
                     </tr>
                   </thead>
                   <tbody>`;
+        // Für Note 1 bis 5: Berechne den Punktebereich als "von … bis … Punkte"
         for (let grade = 1; grade <= 5; grade++) {
           const percentage = (currentThresholds[grade] * 100).toFixed(2);
-          const pointsNeeded = (maxPoints * currentThresholds[grade]).toFixed(2);
+          let lowerPoints = roundUpToNearestHalf(maxPoints * currentThresholds[grade]);
+          let upperPoints;
+          if (grade === 1) {
+            upperPoints = roundDownToNearestHalf(maxPoints);
+          } else {
+            upperPoints = roundDownToNearestHalf(maxPoints * currentThresholds[grade - 1] - 0.1);
+          }
+          const lowerStr = lowerPoints.toFixed(1).replace('.', ',');
+          const upperStr = upperPoints.toFixed(1).replace('.', ',');
           const rowClass = (highlightedGrade === grade) ? ' class="highlight"' : '';
           html += `<tr${rowClass}>
                      <td>Note ${grade}</td>
                      <td>${percentage}%</td>
-                     <td>ab ${pointsNeeded}</td>
+                     <td>von ${lowerStr} bis ${upperStr} Punkte</td>
                    </tr>`;
         }
-        const pointsThreshold = (maxPoints * currentThresholds[5]).toFixed(2);
-        const percentageForNote6 = (currentThresholds[5] * 100).toFixed(2);
+        // Für Note 6: "weniger als ..." basierend auf der Schwelle der Note 5
+        let upperPoints6 = roundDownToNearestHalf(maxPoints * currentThresholds[5] - 0.1);
+        const upper6Str = upperPoints6.toFixed(1).replace('.', ',');
         const rowClass6 = (highlightedGrade === 6) ? ' class="highlight"' : '';
         html += `<tr${rowClass6}>
                    <td>Note 6</td>
-                   <td>unter ${percentageForNote6}%</td>
-                   <td>weniger als ${pointsThreshold}</td>
+                   <td>unter ${(currentThresholds[5]*100).toFixed(2)}%</td>
+                   <td>weniger als ${upper6Str} Punkte</td>
                  </tr>`;
         html += `</tbody></table>`;
       } else {
+        // Wenn keine valide Maximalpunktzahl vorliegt, nur Tabelle mit den Spalten "Note" und "ab (%)"
         html += `<table>
                   <thead>
                     <tr>
@@ -345,11 +365,10 @@
                      <td>${percentage}%</td>
                    </tr>`;
         }
-        const percentageForNote6 = (currentThresholds[5] * 100).toFixed(2);
         const rowClass6 = (highlightedGrade === 6) ? ' class="highlight"' : '';
         html += `<tr${rowClass6}>
                    <td>Note 6</td>
-                   <td>unter ${percentageForNote6}%</td>
+                   <td>unter ${(currentThresholds[5]*100).toFixed(2)}%</td>
                  </tr>`;
         html += `</tbody></table>`;
       }
