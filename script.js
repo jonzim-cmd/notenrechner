@@ -29,7 +29,7 @@ const apThresholds = {
 let currentThresholds = Object.assign({}, ihkThresholds);
 let currentPreset = "IHK"; // "IHK", "AP/3.SA" oder "manuell"
 
-// Elemente abrufen
+// Elemente
 const mainTitle = document.getElementById('mainTitle');
 const presetIHKBtn = document.getElementById('presetIHK');
 const presetAPBtn = document.getElementById('presetAP');
@@ -148,7 +148,7 @@ function updateInfoBox() {
   }
   
   if (hasValidMaxPoints) {
-    // Kopfzeile wie im Original, inklusive der Spalte "ab (Punkte)"
+    // Kopfzeile wie im Original, inklusive der Spalte "ab (%)" und "Punkte"
     html += `<table>
               <thead>
                 <tr>
