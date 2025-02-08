@@ -27,7 +27,7 @@ const apThresholds = {
 
 // Aktuelle Thresholds und aktueller Preset-Modus
 let currentThresholds = Object.assign({}, ihkThresholds);
-let currentPreset = "IHK"; // Mögliche Werte: "IHK", "AP/3.SA" oder "manuell"
+let currentPreset = "IHK"; // "IHK", "AP/3.SA" oder "manuell"
 
 // Elemente abrufen
 const mainTitle = document.getElementById('mainTitle');
@@ -148,6 +148,7 @@ function updateInfoBox() {
   }
   
   if (hasValidMaxPoints) {
+    // Kopfzeile wie im Original, inklusive der Spalte "ab (Punkte)"
     html += `<table>
               <thead>
                 <tr>
@@ -187,7 +188,7 @@ function updateInfoBox() {
              </tr>`;
     html += `</tbody></table>`;
   } else {
-    // Wenn keine valide Maximalpunktzahl vorliegt
+    // Wenn keine valide Maximalpunktzahl vorliegt, nur Tabelle mit den Spalten "Note" und "ab (%)"
     html += `<table>
               <thead>
                 <tr>
