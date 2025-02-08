@@ -5,7 +5,6 @@ body {
   padding: 20px;
   color: #e0e0e0;
 }
-
 .card {
   background: #1e1e1e;
   max-width: 500px;
@@ -15,18 +14,15 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
 }
-
 .card-title {
   font-size: 24px;
   margin-bottom: 10px;
   text-align: center;
 }
-
 .button-group {
   text-align: center;
   margin-bottom: 20px;
 }
-
 .button-group button {
   padding: 10px 15px;
   margin: 0 5px;
@@ -36,21 +32,17 @@ body {
   color: #000;
   cursor: pointer;
 }
-
 .button-group button:hover {
   background: #9a67ea;
 }
-
 .input-group {
   margin-bottom: 15px;
 }
-
 .input-group label {
   display: block;
   font-weight: bold;
   margin-bottom: 5px;
 }
-
 .input-group input {
   width: 100%;
   padding: 8px;
@@ -59,25 +51,21 @@ body {
   border: 1px solid #555;
   border-radius: 4px;
 }
-
 .alert {
   margin-top: 15px;
   padding: 10px;
   border-radius: 4px;
 }
-
 .alert-success {
   background: #2e7d32;
   border: 1px solid #1b5e20;
   color: #c8e6c9;
 }
-
 .alert-error {
   background: #b71c1c;
   border: 1px solid #7f0000;
   color: #ff8a80;
 }
-
 .info-box {
   margin-top: 20px;
   padding: 10px;
@@ -85,27 +73,22 @@ body {
   border: 1px solid #333;
   border-radius: 4px;
 }
-
 .info-box h3 {
   margin-top: 0;
 }
-
 /* Tabelle in der Info-Box */
 .info-box table {
   width: 100%;
   border-collapse: collapse;
 }
-
 .info-box th, .info-box td {
   padding: 8px;
   text-align: left;
   border-bottom: 1px solid #444;
 }
-
 .info-box th {
   border-bottom: 2px solid #444;
 }
-
 /* Hervorhebung der ausgewählten Zeile */
 .highlight {
   background-color: #2e7d32;
