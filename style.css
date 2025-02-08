@@ -57,8 +57,7 @@ body {
   border-radius: 4px;
 }
 .alert-success {
-  background: #2e7d32;
-  border: 1px solid #1b5e20;
+  background: #007BFF;
   color: #c8e6c9;
 }
 .alert-error {
