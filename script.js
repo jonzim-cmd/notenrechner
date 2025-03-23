@@ -223,7 +223,7 @@ function updateInfoBox() {
     html += `<tr${rowClass6}>
                <td>Note 6</td>
                <td>unter ${(currentThresholds[5]*100).toFixed(2).replace('.', ',')}%</td>
-               <td>von 0,0 bis ${upper6Str} Punkte</td>
+               <td>weniger als ${upper6Str} Punkte</td>
              </tr>`;
     html += `</tbody></table>`;
   } else {
