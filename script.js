@@ -116,6 +116,16 @@ document.getElementById('maxPoints').addEventListener('input', function() {
   updateResult();
 });
 document.getElementById('achievedPoints').addEventListener('input', function() {
+  // Stelle sicher, dass der manuell eingegebene Wert richtig formatiert wird
+  const input = this;
+  const value = parseFloat((input.value || '0').replace(',', '.')) || 0;
+  
+  // Konvertiere zu Zeichenkette mit einer Dezimalstelle und Komma als Trennzeichen
+  // Aber nur, wenn der Benutzer gerade nicht tippt (wenn das Feld den Fokus verliert)
+  input.onblur = function() {
+    input.value = value.toFixed(1).replace('.', ',');
+  };
+  
   updateInfoBox();
   updateResult();
 });
@@ -125,15 +135,17 @@ document.getElementById('increasePoints').addEventListener('click', function() {
   const achievedPointsInput = document.getElementById('achievedPoints');
   const maxPointsInput = document.getElementById('maxPoints');
   
-  let value = parseFloat(achievedPointsInput.value.replace(',', '.')) || 0;
-  const maxValue = parseFloat(maxPointsInput.value.replace(',', '.')) || 100;
+  // Aktuellen Wert parsen, mit Fallback auf 0 wenn ungültig
+  let value = parseFloat((achievedPointsInput.value || '0').replace(',', '.')) || 0;
+  const maxValue = parseFloat((maxPointsInput.value || '100').replace(',', '.')) || 100;
   
   // Um 0,5 erhöhen, aber nicht über den Maximalwert
   value = Math.min(value + 0.5, maxValue);
   
-  // Formatierung mit Komma statt Punkt
+  // Formatierung mit Komma statt Punkt und einer Nachkommastelle
   achievedPointsInput.value = value.toFixed(1).replace('.', ',');
   
+  // Sofort aktualisieren
   updateInfoBox();
   updateResult();
 });
@@ -141,14 +153,16 @@ document.getElementById('increasePoints').addEventListener('click', function() {
 document.getElementById('decreasePoints').addEventListener('click', function() {
   const achievedPointsInput = document.getElementById('achievedPoints');
   
-  let value = parseFloat(achievedPointsInput.value.replace(',', '.')) || 0;
+  // Aktuellen Wert parsen, mit Fallback auf 0 wenn ungültig
+  let value = parseFloat((achievedPointsInput.value || '0').replace(',', '.')) || 0;
   
   // Um 0,5 verringern, aber nicht unter 0
   value = Math.max(value - 0.5, 0);
   
-  // Formatierung mit Komma statt Punkt
+  // Formatierung mit Komma statt Punkt und einer Nachkommastelle
   achievedPointsInput.value = value.toFixed(1).replace('.', ',');
   
+  // Sofort aktualisieren
   updateInfoBox();
   updateResult();
 });
@@ -301,6 +315,8 @@ function updateResult() {
   }
 }
 
-// Initiale Aktualisierung: Standardmäßig Preset IHK laden
+// Initiale Aktualisierung: Standardmäßig Preset IHK laden und Startpunkte setzen
 loadPreset("IHK");
+// Lege einen Standardwert für erreichte Punkte fest (0,0 mit Komma)
+document.getElementById('achievedPoints').value = "0,0";
 updateInfoBox();
