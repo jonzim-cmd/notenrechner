@@ -77,11 +77,11 @@ function loadPreset(preset) {
   }
   currentPreset = preset;
   // Dashboard-Felder aktualisieren mit formatierter Ausgabe
-  thresholdInputs[0].value = (currentThresholds[1] * 100).toFixed(2);
-  thresholdInputs[1].value = (currentThresholds[2] * 100).toFixed(2);
-  thresholdInputs[2].value = (currentThresholds[3] * 100).toFixed(2);
-  thresholdInputs[3].value = (currentThresholds[4] * 100).toFixed(2);
-  thresholdInputs[4].value = (currentThresholds[5] * 100).toFixed(2);
+  thresholdInputs[0].value = (currentThresholds[1] * 100).toFixed(2).replace('.', ',');
+  thresholdInputs[1].value = (currentThresholds[2] * 100).toFixed(2).replace('.', ',');
+  thresholdInputs[2].value = (currentThresholds[3] * 100).toFixed(2).replace('.', ',');
+  thresholdInputs[3].value = (currentThresholds[4] * 100).toFixed(2).replace('.', ',');
+  thresholdInputs[4].value = (currentThresholds[5] * 100).toFixed(2).replace('.', ',');
   
   updateHeader();
   updateInfoBox();
@@ -99,7 +99,7 @@ presetAPBtn.addEventListener('click', function() {
 // Bei manuellen Änderungen in den Dashboard-Feldern wird der Modus auf "manuell" gesetzt.
 thresholdInputs.forEach((input, index) => {
   input.addEventListener('input', function() {
-    const val = parseFloat(input.value) / 100;
+    const val = parseFloat(input.value.replace(',', '.')) / 100;
     if (!isNaN(val)) {
       currentThresholds[index + 1] = val;
     }
@@ -115,17 +115,8 @@ document.getElementById('maxPoints').addEventListener('input', function() {
   updateInfoBox();
   updateResult();
 });
+
 document.getElementById('achievedPoints').addEventListener('input', function() {
-  // Stelle sicher, dass der manuell eingegebene Wert richtig formatiert wird
-  const input = this;
-  const value = parseFloat((input.value || '0').replace(',', '.')) || 0;
-  
-  // Konvertiere zu Zeichenkette mit einer Dezimalstelle und Komma als Trennzeichen
-  // Aber nur, wenn der Benutzer gerade nicht tippt (wenn das Feld den Fokus verliert)
-  input.onblur = function() {
-    input.value = value.toFixed(1).replace('.', ',');
-  };
-  
   updateInfoBox();
   updateResult();
 });
@@ -207,7 +198,7 @@ function updateInfoBox() {
               <tbody>`;
     // Für Note 1 bis 5: Berechne den Punktebereich als "von … bis … Punkte"
     for (let grade = 1; grade <= 5; grade++) {
-      const percentage = (currentThresholds[grade] * 100).toFixed(2);
+      const percentage = (currentThresholds[grade] * 100).toFixed(2).replace('.', ',');
       let lowerPoints = roundUpToNearestHalf(maxPoints * currentThresholds[grade]);
       let upperPoints;
       if (grade === 1) {
@@ -231,7 +222,7 @@ function updateInfoBox() {
     const rowClass6 = (highlightedGrade === 6) ? ' class="highlight"' : '';
     html += `<tr${rowClass6}>
                <td>Note 6</td>
-               <td>unter ${(currentThresholds[5]*100).toFixed(2)}%</td>
+               <td>unter ${(currentThresholds[5]*100).toFixed(2).replace('.', ',')}%</td>
                <td>weniger als ${upper6Str} Punkte</td>
              </tr>`;
     html += `</tbody></table>`;
@@ -246,7 +237,7 @@ function updateInfoBox() {
               </thead>
               <tbody>`;
     for (let grade = 1; grade <= 5; grade++) {
-      const percentage = (currentThresholds[grade] * 100).toFixed(2);
+      const percentage = (currentThresholds[grade] * 100).toFixed(2).replace('.', ',');
       const rowClass = (highlightedGrade === grade) ? ' class="highlight"' : '';
       html += `<tr${rowClass}>
                  <td>Note ${grade}</td>
@@ -256,7 +247,7 @@ function updateInfoBox() {
     const rowClass6 = (highlightedGrade === 6) ? ' class="highlight"' : '';
     html += `<tr${rowClass6}>
                <td>Note 6</td>
-               <td>unter ${(currentThresholds[5]*100).toFixed(2)}%</td>
+               <td>unter ${(currentThresholds[5]*100).toFixed(2).replace('.', ',')}%</td>
              </tr>`;
     html += `</tbody></table>`;
   }
@@ -292,7 +283,7 @@ function calculateGrade(max, achieved) {
   }
   return {
     grade: grade,
-    percentage: percentage
+    percentage: percentage.toFixed(2).replace('.', ',')
   };
 }
 
