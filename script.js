@@ -215,15 +215,14 @@ function updateInfoBox() {
                  <td>von ${lowerStr} bis ${upperStr} Punkte</td>
                </tr>`;
     }
-    // Für Note 6: "weniger als ..." basierend auf der Schwelle der Note 5
-    // KORRIGIERT: Der 0.1 Abzug wurde entfernt
-    let upperPoints6 = roundDownToNearestHalf(maxPoints * currentThresholds[5]);
+    // Für Note 6: Von 0,0 bis zur oberen Grenze
+    let upperPoints6 = roundDownToNearestHalf(maxPoints * currentThresholds[5] - 0.1);
     const upper6Str = upperPoints6.toFixed(1).replace('.', ',');
     const rowClass6 = (highlightedGrade === 6) ? ' class="highlight"' : '';
     html += `<tr${rowClass6}>
                <td>Note 6</td>
                <td>unter ${(currentThresholds[5]*100).toFixed(2).replace('.', ',')}%</td>
-               <td>weniger als ${upper6Str} Punkte</td>
+               <td>von 0,0 bis ${upper6Str} Punkte</td>
              </tr>`;
     html += `</tbody></table>`;
   } else {
