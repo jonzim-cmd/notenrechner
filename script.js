@@ -120,6 +120,39 @@ document.getElementById('achievedPoints').addEventListener('input', function() {
   updateResult();
 });
 
+// Event Listener für die Auf/Ab-Buttons für erreichte Punktzahl
+document.getElementById('increasePoints').addEventListener('click', function() {
+  const achievedPointsInput = document.getElementById('achievedPoints');
+  const maxPointsInput = document.getElementById('maxPoints');
+  
+  let value = parseFloat(achievedPointsInput.value.replace(',', '.')) || 0;
+  const maxValue = parseFloat(maxPointsInput.value.replace(',', '.')) || 100;
+  
+  // Um 0,5 erhöhen, aber nicht über den Maximalwert
+  value = Math.min(value + 0.5, maxValue);
+  
+  // Formatierung mit Komma statt Punkt
+  achievedPointsInput.value = value.toFixed(1).replace('.', ',');
+  
+  updateInfoBox();
+  updateResult();
+});
+
+document.getElementById('decreasePoints').addEventListener('click', function() {
+  const achievedPointsInput = document.getElementById('achievedPoints');
+  
+  let value = parseFloat(achievedPointsInput.value.replace(',', '.')) || 0;
+  
+  // Um 0,5 verringern, aber nicht unter 0
+  value = Math.max(value - 0.5, 0);
+  
+  // Formatierung mit Komma statt Punkt
+  achievedPointsInput.value = value.toFixed(1).replace('.', ',');
+  
+  updateInfoBox();
+  updateResult();
+});
+
 // Aktualisiert die Info-Box inklusive dynamischer Überschrift und stellt die Notengrenzen in Tabellenform dar
 function updateInfoBox() {
   const maxPointsInput = document.getElementById('maxPoints').value;
@@ -219,8 +252,9 @@ function updateInfoBox() {
 
 // Berechnet die Note anhand der eingegebenen Punktzahlen
 function calculateGrade(max, achieved) {
-  max = max.replace(',', '.');
-  achieved = achieved.replace(',', '.');
+  // Stellt sicher, dass die Werte als Strings behandelt werden, bevor replace aufgerufen wird
+  max = String(max).replace(',', '.');
+  achieved = String(achieved).replace(',', '.');
 
   const maxNum = parseFloat(max);
   const achievedNum = parseFloat(achieved);
