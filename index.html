@@ -21,11 +21,19 @@
     <!-- Eingabefelder -->
     <div class="input-group">
       <label for="maxPoints">Maximale Punktzahl:</label>
-      <input type="number" step="any" id="maxPoints" name="maxPoints" min="10" max="100" placeholder="z.B. 100">
+      <input type="text" id="maxPoints" name="maxPoints" placeholder="z.B. 100">
     </div>
+    
+    <!-- Erreichte Punktzahl mit Auf/Ab-Buttons -->
     <div class="input-group">
       <label for="achievedPoints">Erreichte Punktzahl:</label>
-      <input type="number" step="any" id="achievedPoints" name="achievedPoints" min="0" placeholder="z.B. 75">
+      <div class="input-with-buttons">
+        <input type="text" id="achievedPoints" name="achievedPoints" placeholder="z.B. 75,0">
+        <div class="points-controls">
+          <button id="increasePoints" class="points-control-btn">+</button>
+          <button id="decreasePoints" class="points-control-btn">-</button>
+        </div>
+      </div>
     </div>
     
     <!-- Ergebnisanzeige -->
@@ -41,23 +49,23 @@
       <h2>Notengrenzen anpassen</h2>
       <div class="input-group">
         <label for="threshold1">Note 1 Grenze (%):</label>
-        <input type="number" id="threshold1" step="any" value="92" min="0" max="100">
+        <input type="text" id="threshold1" value="92,00">
       </div>
       <div class="input-group">
         <label for="threshold2">Note 2 Grenze (%):</label>
-        <input type="number" id="threshold2" step="any" value="81" min="0" max="100">
+        <input type="text" id="threshold2" value="81,00">
       </div>
       <div class="input-group">
         <label for="threshold3">Note 3 Grenze (%):</label>
-        <input type="number" id="threshold3" step="any" value="67" min="0" max="100">
+        <input type="text" id="threshold3" value="67,00">
       </div>
       <div class="input-group">
         <label for="threshold4">Note 4 Grenze (%):</label>
-        <input type="number" id="threshold4" step="any" value="50" min="0" max="100">
+        <input type="text" id="threshold4" value="50,00">
       </div>
       <div class="input-group">
         <label for="threshold5">Note 5 Grenze (%):</label>
-        <input type="number" id="threshold5" step="any" value="30" min="0" max="100">
+        <input type="text" id="threshold5" value="30,00">
       </div>
     </div>
   </div>
